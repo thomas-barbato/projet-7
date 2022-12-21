@@ -38,7 +38,7 @@ all_actions_list = [
 def get_list(data_list: list, sort_by: str = "") -> list:
     # if sort_by is defined, set sort for data_list
     # else return unchanged list
-    temp_list = [data for data in data_list]
+    temp_list: list = [data for data in data_list]
     match sort_by:
         case "min":
             temp_list.sort(key=operator.itemgetter("total"), reverse=False)
@@ -53,7 +53,7 @@ def get_sorted_results(data_list: list, sort_by: str = "") -> None:
     action_list: list = []
     max_cost: int = 500
 
-    current_action_list = get_list(data_list, sort_by)
+    current_action_list: list = get_list(data_list, sort_by)
 
     for action in current_action_list:
         if (action["total"] + current_cost) <= max_cost:
