@@ -72,7 +72,7 @@ def sorted_by_profit(data_list: list = []) -> None:
     current_cost: int = 0
     action_list: list = []
     max_cost: int = 500
-    profits_data = [data for data in data_list]
+    profits_data: list = [data for data in data_list]
 
     for data in profits_data:
         data.update({"profit": round((data["total"] - data["price"]), 2)})
