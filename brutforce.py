@@ -48,10 +48,10 @@ def get_list(data_list: list, sort_by: str = "") -> list:
 
 
 def get_sorted_results(data_list: list, sort_by: str = "") -> None:
-    current_gain = 0
-    current_cost = 0
-    action_list = []
-    max_cost = 500
+    current_gain: float = 0.0
+    current_cost: int = 0
+    action_list: list = []
+    max_cost: int = 500
 
     current_action_list = get_list(data_list, sort_by)
 
@@ -68,10 +68,10 @@ def get_sorted_results(data_list: list, sort_by: str = "") -> None:
 
 
 def sorted_by_profit(data_list: list = []) -> None:
-    current_gain = 0
-    current_cost = 0
-    action_list = []
-    max_cost = 500
+    current_gain: float = 0.0
+    current_cost: int = 0
+    action_list: list = []
+    max_cost: int = 500
     profits_data = [data for data in data_list]
 
     for data in profits_data:
@@ -90,13 +90,14 @@ def sorted_by_profit(data_list: list = []) -> None:
         f"Gain pour l'investisseur: {round(current_gain, 2)}€\n"
     )
 
+
 # same result has get_sorted_results(no_sort_parameter)
 """
 
 def bruteforced_results(data_list: list, data_used: list = [], current_gain: float = 0.0):
     current_cost = sum([element["total"] for element in data_used]) if len(data_used) > 0 else 0
     current_gain = current_gain if current_gain > 0.0 else 0.0
-    max_cost = 500.0
+    max_cost: int = 500.0
     for i, action in enumerate(data_list):
         cost_sum = current_cost + action["total"]
         if cost_sum < max_cost:
@@ -116,4 +117,4 @@ get_sorted_results(all_actions_list, "max")
 get_sorted_results(all_actions_list, "min")
 get_sorted_results(all_actions_list)
 sorted_by_profit(all_actions_list)
-#bruteforced_results(all_actions_list)
+# bruteforced_results(all_actions_list)
