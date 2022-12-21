@@ -67,6 +67,29 @@ def get_sorted_results(data_list: list, sort_by: str = "") -> None:
     )
 
 
+def sorted_by_profit(data_list: list = []) -> None:
+    current_gain = 0
+    current_cost = 0
+    action_list = []
+    max_cost = 500
+    profits_data = [data for data in data_list]
+
+    for data in profits_data:
+        data.update({"profit": round((data["total"] - data["price"]), 2)})
+
+    profits_data.sort(key=operator.itemgetter("profit"), reverse=True)
+
+    for data in profits_data:
+        if current_cost + data["total"] <= max_cost:
+            action_list.append(data)
+            current_cost += data["total"]
+            current_gain += data["profit"]
+    print(
+        f"Liste des actions à acheter: {[data['actions'] for data in profits_data]}\n"
+        f"Couts pour l'entreprise: {round(current_cost, 2)}€\n"
+        f"Gain pour l'investisseur: {round(current_gain, 2)}€\n"
+    )
+
 # same result has get_sorted_results(no_sort_parameter)
 """
 
@@ -92,4 +115,5 @@ def bruteforced_results(data_list: list, data_used: list = [], current_gain: flo
 get_sorted_results(all_actions_list, "max")
 get_sorted_results(all_actions_list, "min")
 get_sorted_results(all_actions_list)
+sorted_by_profit(all_actions_list)
 #bruteforced_results(all_actions_list)
