@@ -61,7 +61,7 @@ def get_sorted_results(data_list: list, sort_by: str = "") -> None:
             current_cost += action["total"]
             current_gain += action["total"] - action["price"]
     print(
-        f"Liste des actions à acheter: {action_list}\n"
+        f"Liste des actions à acheter: {', '.join(action_list)}\n"
         f"Couts pour l'entreprise: {round(current_cost, 2)}€\n"
         f"Gain pour l'investisseur: {round(current_gain, 2)}€\n"
     )
@@ -81,11 +81,11 @@ def sorted_by_profit(data_list: list = []) -> None:
 
     for data in profits_data:
         if current_cost + data["total"] <= max_cost:
-            action_list.append(data)
+            action_list.append(data["actions"])
             current_cost += data["total"]
             current_gain += data["profit"]
     print(
-        f"Liste des actions à acheter: {[data['actions'] for data in profits_data]}\n"
+        f"Liste des actions à acheter: {', '.join(action_list)}\n"
         f"Couts pour l'entreprise: {round(current_cost, 2)}€\n"
         f"Gain pour l'investisseur: {round(current_gain, 2)}€\n"
     )
