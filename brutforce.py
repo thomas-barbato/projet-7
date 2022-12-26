@@ -22,7 +22,6 @@ actions: list = [
     {"actions": "Action-19", "price": 24, "profit_for_2_years": 21},
     {"actions": "Action-20", "price": 114, "profit_for_2_years": 18},
 ]
-
 # get results values.
 all_actions_list = [
     {
@@ -112,9 +111,58 @@ def bruteforced_results(data_list: list, data_used: list = [], current_gain: flo
             f"Gain pour l'investisseur: {round(current_gain, 2)}€\n"
         )
 """
-
+# solutions naïves
 get_sorted_results(all_actions_list, "max")
 get_sorted_results(all_actions_list, "min")
 get_sorted_results(all_actions_list)
 sorted_by_profit(all_actions_list)
-# bruteforced_results(all_actions_list)
+
+
+actions_tuple_list: list = [
+    ["action-1", 20, 0.05],
+    ["Action-2", 30, 0.1],
+    ["Action-3", 50, 0.15],
+    ["Action-4", 70, 0.2],
+    ["Action-5", 60, 0.17],
+    ["Action-6", 80, 0.25],
+    ["Action-7", 22, 0.07],
+    ["Action-8", 26, 0.11],
+    ["Action-9", 48, 0.13],
+    ["Action-10", 34, 0.27],
+    ["Action-11", 42, 0.17],
+    ["Action-12", 110, 0.09],
+    ["Action-13", 38, 0.23],
+    ["Action-14", 14, 0.01],
+    ["Action-15", 18, 0.03],
+    ["Action-16", 8, 0.08],
+    ["Action-17", 4, 0.12],
+    ["Action-18", 10, 0.14],
+    ["Action-19", 24, 0.21],
+    ["Action-20", 114, 0.18],
+]
+
+
+def bruteforce(max_cost, data, selected_actions: list = []):
+    if data:
+        action_data, list_value1 = bruteforce(
+            max_cost, data[1:], selected_actions
+        )
+        selected_action = data[0]
+        if selected_action[1] <= max_cost:
+            action_data2, list_value2 = bruteforce(
+                max_cost - selected_action[1],
+                data[1:],
+                selected_actions + [selected_action],
+            )
+            if action_data < action_data2:
+                return action_data2, list_value2
+        return action_data, list_value1
+    else:
+        return (
+            f"la rentabilité maximum obtenue est de {round(sum([i[1] * i[2] for i in selected_actions]), 2)}€",
+            f"La depense maximum est de {sum([i[1] for i in selected_actions])} €, "
+            f"avec ces actions: {', '.join([i[0]for i in selected_actions])}",
+        )
+
+
+print(bruteforce(max_cost=500, data=actions_tuple_list))
