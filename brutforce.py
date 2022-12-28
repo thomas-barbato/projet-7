@@ -34,38 +34,6 @@ all_actions_list = [
 ]
 
 
-def get_list(data_list: list, sort_by: str = "") -> list:
-    # if sort_by is defined, set sort for data_list
-    # else return unchanged list
-    temp_list: list = [data for data in data_list]
-    match sort_by:
-        case "min":
-            temp_list.sort(key=operator.itemgetter("total"), reverse=False)
-        case "max":
-            temp_list.sort(key=operator.itemgetter("total"), reverse=True)
-    return temp_list
-
-
-def get_sorted_results(data_list: list, sort_by: str = "") -> None:
-    current_gain: float = 0.0
-    current_cost: int = 0
-    action_list: list = []
-    max_cost: int = 500
-
-    current_action_list: list = get_list(data_list, sort_by)
-
-    for action in current_action_list:
-        if (action["total"] + current_cost) <= max_cost:
-            action_list.append(action["actions"])
-            current_cost += action["total"]
-            current_gain += action["total"] - action["price"]
-    print(
-        f"Liste des actions à acheter: {', '.join(action_list)}\n"
-        f"Couts pour l'entreprise: {round(current_cost, 2)}€\n"
-        f"Gain pour l'investisseur: {round(current_gain, 2)}€\n"
-    )
-
-
 def sorted_by_profit(data_list: list = []) -> None:
     current_gain: float = 0.0
     current_cost: int = 0
@@ -90,79 +58,109 @@ def sorted_by_profit(data_list: list = []) -> None:
     )
 
 
-# same result has get_sorted_results(no_sort_parameter)
-"""
-
-def bruteforced_results(data_list: list, data_used: list = [], current_gain: float = 0.0):
-    current_cost = sum([element["total"] for element in data_used]) if len(data_used) > 0 else 0
-    current_gain = current_gain if current_gain > 0.0 else 0.0
-    max_cost: int = 500.0
-    for i, action in enumerate(data_list):
-        cost_sum = current_cost + action["total"]
-        if cost_sum < max_cost:
-            data_used.append(action)
-            current_gain += action["total"] - action["price"]
-            del data_list[i]
-            return bruteforced_results(data_list, data_used, current_gain)
-    else:
-        print(
-            f"Liste des actions à acheter: {[data['actions'] for data in data_used]}\n"
-            f"Couts pour l'entreprise: {round(current_cost, 2)}€\n"
-            f"Gain pour l'investisseur: {round(current_gain, 2)}€\n"
-        )
-"""
 # solutions naïves
-get_sorted_results(all_actions_list, "max")
-get_sorted_results(all_actions_list, "min")
-get_sorted_results(all_actions_list)
 sorted_by_profit(all_actions_list)
 
 
 actions_tuple_list: list = [
-    ["action-1", 20, 0.05],
-    ["Action-2", 30, 0.1],
-    ["Action-3", 50, 0.15],
-    ["Action-4", 70, 0.2],
-    ["Action-5", 60, 0.17],
-    ["Action-6", 80, 0.25],
-    ["Action-7", 22, 0.07],
-    ["Action-8", 26, 0.11],
-    ["Action-9", 48, 0.13],
-    ["Action-10", 34, 0.27],
-    ["Action-11", 42, 0.17],
-    ["Action-12", 110, 0.09],
-    ["Action-13", 38, 0.23],
-    ["Action-14", 14, 0.01],
-    ["Action-15", 18, 0.03],
-    ["Action-16", 8, 0.08],
-    ["Action-17", 4, 0.12],
-    ["Action-18", 10, 0.14],
-    ["Action-19", 24, 0.21],
-    ["Action-20", 114, 0.18],
+    ("action-1", 20, 0.05),
+    ("Action-2", 30, 0.1),
+    ("Action-3", 50, 0.15),
+    ("Action-4", 70, 0.2),
+    ("Action-5", 60, 0.17),
+    ("Action-6", 80, 0.25),
+    ("Action-7", 22, 0.07),
+    ("Action-8", 26, 0.11),
+    ("Action-9", 48, 0.13),
+    ("Action-10", 34, 0.27),
+    ("Action-11", 42, 0.17),
+    ("Action-12", 110, 0.09),
+    ("Action-13", 38, 0.23),
+    ("Action-14", 14, 0.01),
+    ("Action-15", 18, 0.03),
+    ("Action-16", 8, 0.08),
+    ("Action-17", 4, 0.12),
+    ("Action-18", 10, 0.14),
+    ("Action-19", 24, 0.21),
+    ("Action-20", 114, 0.18),
 ]
 
 
-def bruteforce(max_cost, data, selected_actions: list = []):
-    if data:
+def bruteforce(max_cost, actions, selected_actions: list = []):
+    # breakpoint
+    if actions:
+        # if there is element in action list
+        # call recursively "bruteforce" function
+        # we have to call it without the first item
+        # of the list, that's why we begin with
+        # action[1:] and not action[0:]
         action_data, list_value1 = bruteforce(
-            max_cost, data[1:], selected_actions
+            max_cost, actions[1:], selected_actions
         )
-        selected_action = data[0]
+        # take the first element of action list
+        selected_action = actions[0]
+        # if original action price is
+        # lower than max_cost (500 per default)
         if selected_action[1] <= max_cost:
+            # then call bruteforce function and
+            # decrement selected_action[1] value from
+            # max_cost (eg : 500 - 20)
+            # and we add selected_action (as a list element)
+            # in selected_actions
             action_data2, list_value2 = bruteforce(
                 max_cost - selected_action[1],
-                data[1:],
+                actions[1:],
                 selected_actions + [selected_action],
             )
+            # check best solution
             if action_data < action_data2:
                 return action_data2, list_value2
         return action_data, list_value1
+    # when there is no more element,
+    # display results.
     else:
         return (
-            f"la rentabilité maximum obtenue est de {round(sum([i[1] * i[2] for i in selected_actions]), 2)}€",
-            f"La depense maximum est de {sum([i[1] for i in selected_actions])} €, "
-            f"avec ces actions: {', '.join([i[0]for i in selected_actions])}",
+            f"Gain pour l'investisseur: {round(sum([(i[1] * i[2]) for i in selected_actions]), 2)}€, "
+            f"couts pour l'entreprise: {round(sum([i[1] for i in selected_actions]),2)}€. ",
+            f"Liste des actions à acheter: {', '.join([i[0]for i in selected_actions])}.",
         )
 
 
-print(bruteforce(max_cost=500, data=actions_tuple_list))
+# used for lesser item length list
+print(bruteforce(max_cost=500, actions=actions_tuple_list))
+
+
+# optimised solution
+def dynamic(max_cost, actions):
+    # define matrix and set all index to 0.
+    # use len + 1 to count stage 0.
+    matrix: list = [
+        [0 for _ in range(max_cost + 1)] for _ in range(len(actions) + 1)
+    ]
+
+    for i in range(1, len(actions) + 1):
+        for w in range(1, max_cost + 1):
+            if actions[i-1][1] <= w:
+                matrix[i][w] = max(actions[i-1][2] + matrix[i-1][w-actions[i-1][1]], matrix[i-1][w])
+            else:
+                matrix[i][w] = matrix[i-1][w]
+
+    cost: int = max_cost
+    action_index: int = len(actions)
+    actions_selected: list = []
+
+    while cost >= 0 and action_index >= 0:
+        action = actions[action_index-1]
+        if matrix[action_index][cost] == matrix[action_index-1][cost-action[1]] + action[2]:
+            actions_selected.append(action)
+            cost -= action[1]
+        action_index -= 1
+
+    return (
+        f"Actions à acheter: {', '.join([action[0] for action in actions_selected])},",
+        f"Gain pour l'investisseur: {sum([ action[1]*action[2] for action in actions_selected])}€",
+        f"Couts pour l'entreprise: {sum([ action[1] for action in actions_selected])}€"
+    )
+
+print("\n")
+print(dynamic(max_cost=500, actions=actions_tuple_list))
