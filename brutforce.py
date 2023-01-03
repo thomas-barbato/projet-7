@@ -1,4 +1,5 @@
 import operator
+from datetime import datetime
 
 actions: list = [
     {"actions": "Action-1", "price": 20, "profit_for_2_years": 5},
@@ -58,8 +59,32 @@ def sorted_by_profit(data_list: list = []) -> None:
     )
 
 
+def sorted_by_max(data_list: list = []) -> None:
+    current_gain: float = 0.0
+    current_cost: int = 0
+    action_list: list = []
+    max_cost: int = 500
+    profits_data: list = [data for data in data_list]
+
+    profits_data.sort(key=operator.itemgetter("price"), reverse=True)
+
+    for data in profits_data:
+        if current_cost + data["total"] <= max_cost:
+            action_list.append(data["actions"])
+            current_cost += data["total"]
+            current_gain += data["total"] - data["price"]
+    print(
+        f"Liste des actions à acheter: {', '.join(action_list)}\n"
+        f"Couts pour l'entreprise: {round(current_cost, 2)}€\n"
+        f"Gain pour l'investisseur: {round(current_gain, 2)}€\n"
+    )
+
+
 # solutions naïves
-sorted_by_profit(all_actions_list)
+# print("Solutions naïves: \n")
+# sorted_by_profit(all_actions_list)
+# sorted_by_max(all_actions_list)
+# print("\n\n")
 
 
 actions_tuple_list: list = [
@@ -119,48 +144,23 @@ def bruteforce(max_cost, actions, selected_actions: list = []):
     # when there is no more element,
     # display results.
     else:
+        gain = round(
+            sum([action[1] * action[2] for action in selected_actions]), 2
+        )
+        cost = sum([action[1] for action in selected_actions])
+        actions_list = ", ".join([action[0] for action in selected_actions])
         return (
-            f"Gain pour l'investisseur: {round(sum([(i[1] * i[2]) for i in selected_actions]), 2)}€, "
-            f"couts pour l'entreprise: {round(sum([i[1] for i in selected_actions]),2)}€. ",
-            f"Liste des actions à acheter: {', '.join([i[0]for i in selected_actions])}.",
+            f"Gain pour l'investisseur: {gain}€,"
+            f" couts pour l'entreprise: {cost}€. ",
+            f"Liste des actions à acheter: {actions_list}.",
         )
 
 
 # used for lesser item length list
+print("\nBRUTEFORCE")
+start_time = datetime.now()
 print(bruteforce(max_cost=500, actions=actions_tuple_list))
-
+end_time = datetime.now()
+print(f"Temp de traitement: {(end_time - start_time).total_seconds()} secondes")
 
 # optimised solution
-def dynamic(max_cost, actions):
-    # define matrix and set all index to 0.
-    # use len + 1 to count stage 0.
-    matrix: list = [
-        [0 for _ in range(max_cost + 1)] for _ in range(len(actions) + 1)
-    ]
-
-    for i in range(1, len(actions) + 1):
-        for w in range(1, max_cost + 1):
-            if actions[i-1][1] <= w:
-                matrix[i][w] = max(actions[i-1][2] + matrix[i-1][w-actions[i-1][1]], matrix[i-1][w])
-            else:
-                matrix[i][w] = matrix[i-1][w]
-
-    cost: int = max_cost
-    action_index: int = len(actions)
-    actions_selected: list = []
-
-    while cost >= 0 and action_index >= 0:
-        action = actions[action_index-1]
-        if matrix[action_index][cost] == matrix[action_index-1][cost-action[1]] + action[2]:
-            actions_selected.append(action)
-            cost -= action[1]
-        action_index -= 1
-
-    return (
-        f"Actions à acheter: {', '.join([action[0] for action in actions_selected])},",
-        f"Gain pour l'investisseur: {sum([ action[1]*action[2] for action in actions_selected])}€",
-        f"Couts pour l'entreprise: {sum([ action[1] for action in actions_selected])}€"
-    )
-
-print("\n")
-print(dynamic(max_cost=500, actions=actions_tuple_list))
