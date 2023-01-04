@@ -25,29 +25,6 @@ base_action_list: list = [
     ["action-20", 114, 0.18],
 ]
 
-def from_csv_to_list(filename):
-    data_set: list = []
-    with open(filename, newline="") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            # skip all altered data row
-            if float(row["price"]) > 0.0 and float(row["profit"]) > 0.0:
-                data_set.append(
-                    # delete "," from all values
-                    # row["price"] is * 100 to avoid ","
-                    # row["profit"] is now in percent
-                    (
-                        row["name"],
-                        int(float(row["price"]) * 100),
-                        int(
-                            (float(row["price"]) * (float(row["profit"])) / 100)
-                            * 100
-                        ),
-                    )
-                )
-    return data_set
-
-
 def optimized(max_cost, actions):
     # define matrix and set all index value to 0.
     # use len + 1 to count stage 0.
@@ -100,6 +77,29 @@ def optimized(max_cost, actions):
         f"Couts pour l'entreprise: {cost}€",
         f"Actions à acheter: {actions_list},",
     )
+
+
+def from_csv_to_list(filename):
+    data_set: list = []
+    with open(filename, newline="") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            # skip all altered data row
+            if float(row["price"]) > 0.0 and float(row["profit"]) > 0.0:
+                data_set.append(
+                    # delete "," from all values
+                    # row["price"] is * 100 to avoid ","
+                    # row["profit"] is now in percent
+                    (
+                        row["name"],
+                        int(float(row["price"]) * 100),
+                        int(
+                            (float(row["price"]) * (float(row["profit"])) / 100)
+                            * 100
+                        ),
+                    )
+                )
+    return data_set
 
 
 def optimized_with_file(max_cost, actions):
