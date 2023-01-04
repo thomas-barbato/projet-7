@@ -24,12 +24,13 @@ actions: list = [
     {"actions": "Action-20", "price": 114, "profit_for_2_years": 18},
 ]
 # get results values.
+# only used in sorted by profit.
 all_actions_list = [
     {
         "actions": value["actions"],
         "price": value["price"],
         "total": value["price"]
-        + ((value["price"] * value["profit_for_2_years"]) / 100),
+        + (value["price"] * value["profit_for_2_years"])/100,
     }
     for value in actions
 ]
@@ -82,33 +83,34 @@ def sorted_by_max(data_list: list = []) -> None:
 
 # solutions naïves
 # print("Solutions naïves: \n")
-# sorted_by_profit(all_actions_list)
+#sorted_by_profit(all_actions_list)
 # sorted_by_max(all_actions_list)
 # print("\n\n")
 
 
-actions_tuple_list: list = [
-    ("action-1", 20, 0.05),
-    ("Action-2", 30, 0.1),
-    ("Action-3", 50, 0.15),
-    ("Action-4", 70, 0.2),
-    ("Action-5", 60, 0.17),
-    ("Action-6", 80, 0.25),
-    ("Action-7", 22, 0.07),
-    ("Action-8", 26, 0.11),
-    ("Action-9", 48, 0.13),
-    ("Action-10", 34, 0.27),
-    ("Action-11", 42, 0.17),
-    ("Action-12", 110, 0.09),
-    ("Action-13", 38, 0.23),
-    ("Action-14", 14, 0.01),
-    ("Action-15", 18, 0.03),
-    ("Action-16", 8, 0.08),
-    ("Action-17", 4, 0.12),
-    ("Action-18", 10, 0.14),
-    ("Action-19", 24, 0.21),
-    ("Action-20", 114, 0.18),
+base_action_list: list = [
+    ["action-01", 20, 0.05],
+    ["action-02", 30, 0.1],
+    ["action-03", 50, 0.15],
+    ["action-04", 70, 0.2],
+    ["action-05", 60, 0.17],
+    ["action-06", 80, 0.25],
+    ["action-07", 22, 0.07],
+    ["action-08", 26, 0.11],
+    ["action-09", 48, 0.13],
+    ["action-10", 34, 0.27],
+    ["action-11", 42, 0.17],
+    ["action-12", 110, 0.09],
+    ["action-13", 38, 0.23],
+    ["action-14", 14, 0.01],
+    ["action-15", 18, 0.03],
+    ["action-16", 8, 0.08],
+    ["action-17", 4, 0.12],
+    ["action-18", 10, 0.14],
+    ["action-19", 24, 0.21],
+    ["action-20", 114, 0.18],
 ]
+
 
 
 def bruteforce(max_cost, actions, selected_actions: list = []):
@@ -145,7 +147,7 @@ def bruteforce(max_cost, actions, selected_actions: list = []):
     # display results.
     else:
         gain = round(
-            sum([action[1] * action[2] for action in selected_actions]), 2
+            sum([action[1] * action[2] for action in selected_actions]),2
         )
         cost = sum([action[1] for action in selected_actions])
         actions_list = ", ".join([action[0] for action in selected_actions])
@@ -159,7 +161,7 @@ def bruteforce(max_cost, actions, selected_actions: list = []):
 # used for lesser item length list
 print("\nBRUTEFORCE")
 start_time = datetime.now()
-print(bruteforce(max_cost=500, actions=actions_tuple_list))
+print(bruteforce(max_cost=500, actions=base_action_list))
 end_time = datetime.now()
 print(f"Temp de traitement: {(end_time - start_time).total_seconds()} secondes")
 
