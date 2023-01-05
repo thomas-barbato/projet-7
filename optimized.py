@@ -3,26 +3,26 @@ import csv
 
 
 base_action_list: list = [
-    ["action-01", 20, 0.05],
-    ["action-02", 30, 0.1],
-    ["action-03", 50, 0.15],
-    ["action-04", 70, 0.2],
-    ["action-05", 60, 0.17],
-    ["action-06", 80, 0.25],
-    ["action-07", 22, 0.07],
-    ["action-08", 26, 0.11],
-    ["action-09", 48, 0.13],
-    ["action-10", 34, 0.27],
-    ["action-11", 42, 0.17],
-    ["action-12", 110, 0.09],
-    ["action-13", 38, 0.23],
-    ["action-14", 14, 0.01],
-    ["action-15", 18, 0.03],
-    ["action-16", 8, 0.08],
-    ["action-17", 4, 0.12],
-    ["action-18", 10, 0.14],
-    ["action-19", 24, 0.21],
-    ["action-20", 114, 0.18],
+    ["action-01", 20, 5],
+    ["action-02", 30, 10],
+    ["action-03", 50, 15],
+    ["action-04", 70, 20],
+    ["action-05", 60, 17],
+    ["action-06", 80, 25],
+    ["action-07", 22, 7],
+    ["action-08", 26, 11],
+    ["action-09", 48, 13],
+    ["action-10", 34, 27],
+    ["action-11", 42, 17],
+    ["action-12", 110, 9],
+    ["action-13", 38, 23],
+    ["action-14", 14, 1],
+    ["action-15", 18, 3],
+    ["action-16", 8, 8],
+    ["action-17", 4, 12],
+    ["action-18", 10, 14],
+    ["action-19", 24, 21],
+    ["action-20", 114, 18],
 ]
 
 def optimized(max_cost, actions):
@@ -68,8 +68,7 @@ def optimized(max_cost, actions):
             cost -= action[1]
 
         action_index -= 1
-
-    gain = round(sum([action[1] * action[2] for action in actions_selected]), 2)
+    gain = round(sum([action[1] * (action[2]/100) for action in actions_selected]), 2)
     cost = sum([action[1] for action in actions_selected])
     actions_list = ", ".join([action[0] for action in actions_selected])
     return (
@@ -89,13 +88,13 @@ def from_csv_to_list(filename):
                 data_set.append(
                     # delete "," from all values
                     # row["price"] is * 100 to avoid ","
-                    # row["profit"] is now in percent
+                    # row["profit"] is now in percent and * 100 to avoid ","
                     (
                         row["name"],
-                        int(float(row["price"]) * 100),
+                        round(int(float(row["price"])),2),
                         int(
                             (float(row["price"]) * (float(row["profit"])) / 100)
-                            * 100
+
                         ),
                     )
                 )
@@ -148,8 +147,8 @@ def optimized_with_file(max_cost, actions):
 
     # get last matrix record
     # divided by 100 and round by 2.
-    gain = matrix[-1][-1] / 100
-    cost = sum([(float(action[1]) / 100) for action in actions_selected])
+    gain = matrix[-1][-1]
+    cost = sum([(float(action[1])) for action in actions_selected])
     actions_list = ", ".join([action[0] for action in actions_selected])
     return (
         f"Gain pour l'investisseur: {gain}€",
@@ -163,13 +162,26 @@ start_time = datetime.now()
 print(optimized(max_cost=500, actions=base_action_list))
 end_time = datetime.now()
 print(f"Temp de traitement: {(end_time - start_time).total_seconds()} secondes")
+
+print("\nOPTIMIZED WITH FILE DATASET 1")
 start_time = datetime.now()
-print("\nOPTIMIZED WITH FILE")
 # max_cost is *100 to go with temporary value
 # in from_csv_to_list function
 print(
     optimized_with_file(
-        max_cost=50000, actions=from_csv_to_list('dataset1_Python+P7.csv')
+        max_cost=500, actions=from_csv_to_list('dataset1_Python+P7.csv')
+    )
+)
+end_time = datetime.now()
+
+print(f"Temp de traitement: {(end_time - start_time).total_seconds()} secondes")
+start_time = datetime.now()
+print("\nOPTIMIZED WITH FILE DATASET 2")
+# max_cost is *100 to go with temporary value
+# in from_csv_to_list function
+print(
+    optimized_with_file(
+        max_cost=500, actions=from_csv_to_list('dataset2_Python+P7.csv')
     )
 )
 end_time = datetime.now()
