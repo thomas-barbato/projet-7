@@ -112,7 +112,7 @@ print("=" * 25)
 """
 print("\nOPTIMIZED WITH FILE DATASET 1")
 start_time = datetime.now()
-dataset1_action = optimized(max_cost=500, actions=from_csv_to_list('dataset1_Python+P7.csv'))
+dataset1_action = optimized(max_cost=500, actions=from_csv_to_list('data/dataset1_Python+P7.csv'))
 end_time = datetime.now()
 
 dataset1_cost = round(sum([action[1] for action in dataset1_action]), 2)
@@ -127,7 +127,7 @@ print("=" * 25)
 
 print("\nOPTIMIZED WITH FILE DATASET 2")
 start_time = datetime.now()
-dataset2_action = optimized(max_cost=500, actions=from_csv_to_list('dataset2_Python+P7.csv'))
+dataset2_action = optimized(max_cost=500, actions=from_csv_to_list('data/dataset2_Python+P7.csv'))
 end_time = datetime.now()
 
 dataset2_cost = round(sum([action[1] for action in dataset2_action]), 2)
