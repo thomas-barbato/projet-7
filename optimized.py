@@ -1,5 +1,10 @@
 from datetime import datetime
 import csv
+import matplotlib.pyplot as plt
+import numpy as np
+import psutil
+import os
+import time
 
 base_action_list: list = [
     ["action-01", 20, (20 * 5) / 100],
@@ -26,6 +31,7 @@ base_action_list: list = [
 
 
 def optimized(max_cost, actions):
+
     # define matrix and set all index value to 0.
     # use len + 1 to count stage 0.
     matrix: list = [
@@ -36,6 +42,7 @@ def optimized(max_cost, actions):
     for i in range(1, len(actions) + 1):
         # for each action, browse budget
         for budget in range(1, max_cost + 1):
+            #cpu_stats.update({(datetime.now() - start_time).total_seconds(): p.cpu_times()[0]})
             # if action cost is lower
             # than budget then
             # get the max between
@@ -51,6 +58,8 @@ def optimized(max_cost, actions):
             # else keep the previous choice.
             else:
                 matrix[i][budget] = matrix[i-1][budget]
+
+
 
     cost: float = max_cost
     action_index: int = len(actions)
@@ -69,7 +78,7 @@ def optimized(max_cost, actions):
 
         action_index -= 1
 
-    return  actions_selected
+    return actions_selected
 
 
 def from_csv_to_list(filename):
@@ -96,6 +105,8 @@ def from_csv_to_list(filename):
 
 
 print("\nOPTIMIZED")
+#p = psutil.Process(os.getpid())
+#cpu_stats = {}
 start_time = datetime.now()
 actions = optimized(max_cost=500, actions=base_action_list)
 end_time = datetime.now()
@@ -108,6 +119,20 @@ print(f"Cout total : {cost}€")
 print(f"Benefice de : {gain}€")
 print(f"Temp de traitement: {(end_time - start_time).total_seconds()} secondes")
 print("=" * 25)
+
+#used with matplotlib
+"""
+print("\n")
+print(cpu_stats)
+lists = cpu_stats.items() # sorted by key, return a list of tuples
+x, y = zip(*lists) # unpack a list of pairs into two tuples
+
+plt.plot(x, y)
+plt.suptitle('optimized.py', fontsize=14, fontweight='bold')
+plt.ylabel("time in seconds")
+plt.xlabel("cpu time")
+plt.show()
+"""
 
 """
 print("\nOPTIMIZED WITH FILE DATASET 1")

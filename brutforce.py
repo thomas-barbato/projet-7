@@ -1,5 +1,9 @@
 import operator
 from datetime import datetime
+import matplotlib.pyplot as plt
+import numpy as np
+import psutil
+import os
 
 actions: list = [
     {"actions": "Action-1", "price": 20, "profit_for_2_years": 5},
@@ -112,9 +116,9 @@ base_action_list: list = [
 ]
 
 
-
 def bruteforce(max_cost, actions, selected_actions: list = []):
     # breakpoint
+
     if actions:
         # if there is element in action list
         # call recursively "bruteforce" function
@@ -139,12 +143,14 @@ def bruteforce(max_cost, actions, selected_actions: list = []):
                 actions[1:],
                 selected_actions + [selected_action],
             )
+            #cpu_stats.update({(datetime.now() - start_time).total_seconds(): p.cpu_times()[0]})
             # check best solution
             if action_data < action_data2:
                 return action_data2, list_value2
         return action_data, list_value1
     # when there is no more element,
     # display results.
+
     else:
         gain = round(
             sum([action[1] * action[2] for action in selected_actions]),2
@@ -161,8 +167,19 @@ def bruteforce(max_cost, actions, selected_actions: list = []):
 # used for lesser item length list
 print("\nBRUTEFORCE")
 start_time = datetime.now()
+# used with matplotlib
+#p = psutil.Process(os.getpid())
+cpu_stats = {}
 print(bruteforce(max_cost=500, actions=base_action_list))
 end_time = datetime.now()
 print(f"Temp de traitement: {(end_time - start_time).total_seconds()} secondes")
+# matplotlib graph
+"""
+lists = cpu_stats.items() # 
+x, y = zip(*lists) # 
+plt.plot(x, y)
+plt.suptitle('bruteforce.py', fontsize=14, fontweight='bold')
+plt.ylabel("time in sec")
+plt.xlabel("cpu time")
+plt.show()"""
 
-# optimised solution
