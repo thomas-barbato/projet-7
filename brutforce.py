@@ -169,7 +169,7 @@ print("\nBRUTEFORCE")
 start_time = datetime.now()
 # used with matplotlib
 #p = psutil.Process(os.getpid())
-cpu_stats = {}
+#cpu_stats = {}
 print(bruteforce(max_cost=500, actions=base_action_list))
 end_time = datetime.now()
 print(f"Temp de traitement: {(end_time - start_time).total_seconds()} secondes")
