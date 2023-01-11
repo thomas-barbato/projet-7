@@ -1,9 +1,11 @@
 import operator
 from datetime import datetime
-import matplotlib.pyplot as plt
-import numpy as np
-import psutil
-import os
+import csv
+
+# import matplotlib.pyplot as plt
+# import numpy as np
+# import psutil
+# import os
 
 actions: list = [
     {"actions": "Action-1", "price": 20, "profit_for_2_years": 5},
@@ -33,8 +35,7 @@ all_actions_list = [
     {
         "actions": value["actions"],
         "price": value["price"],
-        "total": value["price"]
-        + (value["price"] * value["profit_for_2_years"])/100,
+        "total": value["price"] + (value["price"] * value["profit_for_2_years"]) / 100,
     }
     for value in actions
 ]
@@ -86,8 +87,8 @@ def sorted_by_max(data_list: list = []) -> None:
 
 
 # solutions naïves
-# print("Solutions naïves: \n")
-#sorted_by_profit(all_actions_list)
+print("NAIVE SOLUTION:")
+sorted_by_profit(all_actions_list)
 # sorted_by_max(all_actions_list)
 # print("\n\n")
 
@@ -118,16 +119,14 @@ base_action_list: list = [
 
 def bruteforce(max_cost, actions, selected_actions: list = []):
     # breakpoint
-
+    # cpu_stats.update({(datetime.now() - start_time).total_seconds(): p.cpu_times()[0]})
     if actions:
         # if there is element in action list
         # call recursively "bruteforce" function
-        # we have to call it without the first item
+        # we have to call it without the first item (index 0)
         # of the list, that's why we begin with
         # action[1:] and not action[0:]
-        action_data, list_value1 = bruteforce(
-            max_cost, actions[1:], selected_actions
-        )
+        action_data, list_value1 = bruteforce(max_cost, actions[1:], selected_actions)
         # take the first element of action list
         selected_action = actions[0]
         # if original action price is
@@ -143,18 +142,15 @@ def bruteforce(max_cost, actions, selected_actions: list = []):
                 actions[1:],
                 selected_actions + [selected_action],
             )
-            #cpu_stats.update({(datetime.now() - start_time).total_seconds(): p.cpu_times()[0]})
             # check best solution
             if action_data < action_data2:
+                print(action_data2)
                 return action_data2, list_value2
         return action_data, list_value1
     # when there is no more element,
     # display results.
-
     else:
-        gain = round(
-            sum([action[1] * action[2] for action in selected_actions]),2
-        )
+        gain = round(sum([action[1] * action[2] for action in selected_actions]), 2)
         cost = sum([action[1] for action in selected_actions])
         actions_list = ", ".join([action[0] for action in selected_actions])
         return (
@@ -165,21 +161,46 @@ def bruteforce(max_cost, actions, selected_actions: list = []):
 
 
 # used for lesser item length list
-print("\nBRUTEFORCE")
+print("\nBRUTEFORCE SOLUTION")
 start_time = datetime.now()
 # used with matplotlib
-#p = psutil.Process(os.getpid())
-#cpu_stats = {}
+# p = psutil.Process(os.getpid())
+# cpu_stats = {}
 print(bruteforce(max_cost=500, actions=base_action_list))
 end_time = datetime.now()
 print(f"Temp de traitement: {(end_time - start_time).total_seconds()} secondes")
-# matplotlib graph
+
 """
-lists = cpu_stats.items() # 
-x, y = zip(*lists) # 
+# matplotlib graph
+lists = cpu_stats.items()
+x, y = zip(*lists)
 plt.plot(x, y)
 plt.suptitle('bruteforce.py', fontsize=14, fontweight='bold')
 plt.ylabel("time in sec")
 plt.xlabel("cpu time")
-plt.show()"""
+plt.show()
+"""
 
+# Test with bigger number of data.
+# So long.
+"""
+def from_csv_to_list(filename):
+    data_set: list = []
+    with open(filename, newline="") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            # skip all altered data row
+            if float(row["price"]) > 0.0 and float(row["profit"]) > 0.0:
+                data_set.append(
+                    # delete "," from all values
+                    # row["price"] is * 100 to avoid ","
+                    # row["profit"] is now in percent and * 100 to avoid ","
+                    (
+                        row["name"],
+                        round(int(float(row["price"])), 2),
+                        int((float(row["price"]) * (float(row["profit"])) / 100)),
+                    )
+                )
+    return data_set
+print(bruteforce(max_cost=500, actions=from_csv_to_list("data/dataset1_Python+P7.csv")))
+"""

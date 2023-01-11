@@ -1,10 +1,10 @@
 from datetime import datetime
 import csv
-import matplotlib.pyplot as plt
-import numpy as np
-import psutil
-import os
-import time
+
+# import matplotlib.pyplot as plt
+# import numpy as np
+# import psutil
+# import os
 
 base_action_list: list = [
     ["action-01", 20, (20 * 5) / 100],
@@ -34,44 +34,42 @@ def optimized(max_cost, actions):
 
     # define matrix and set all index value to 0.
     # use len + 1 to count stage 0.
-    matrix: list = [
-        [0 for _ in range(max_cost + 1)] for _ in range(len(actions) + 1)
-    ]
+    matrix: list = [[0 for _ in range(max_cost + 1)] for _ in range(len(actions) + 1)]
 
     # browse actions
     for i in range(1, len(actions) + 1):
         # for each action, browse budget
         for budget in range(1, max_cost + 1):
-            #cpu_stats.update({(datetime.now() - start_time).total_seconds(): p.cpu_times()[0]})
+            # cpu_stats.update({(datetime.now() - start_time).total_seconds(): p.cpu_times()[0]})
             # if action cost is lower
             # than budget then
             # get the max between
             # previous action and
             # actual action + optimized choice
             # - cost of the previous action
-            if actions[i-1][1] <= budget:
+            if actions[i - 1][1] <= budget:
 
                 matrix[i][budget] = max(
-                    actions[i-1][2] + matrix[i-1][budget-actions[i-1][1]],
-                    matrix[i-1][budget],
+                    actions[i - 1][2] + matrix[i - 1][budget - actions[i - 1][1]],
+                    matrix[i - 1][budget],
                 )
             # else keep the previous choice.
             else:
-                matrix[i][budget] = matrix[i-1][budget]
-
-
+                matrix[i][budget] = matrix[i - 1][budget]
 
     cost: float = max_cost
     action_index: int = len(actions)
     actions_selected: list = []
 
     while cost >= 0 and action_index >= 0:
+
         # get last action in actions
         # same as first loop but reversed.
         action = actions[action_index - 1]
 
         if (
-            matrix[action_index][cost] == matrix[action_index - 1][cost - action[1]] + action[2]
+            matrix[action_index][cost]
+            == matrix[action_index - 1][cost - action[1]] + action[2]
         ):
             actions_selected.append(action)
             cost -= action[1]
@@ -94,19 +92,16 @@ def from_csv_to_list(filename):
                     # row["profit"] is now in percent and * 100 to avoid ","
                     (
                         row["name"],
-                        round(int(float(row["price"])),2),
-                        int(
-                            (float(row["price"]) * (float(row["profit"])) / 100)
-
-                        ),
+                        round(int(float(row["price"])), 2),
+                        int((float(row["price"]) * (float(row["profit"])) / 100)),
                     )
                 )
     return data_set
 
 
-print("\nOPTIMIZED")
-#p = psutil.Process(os.getpid())
-#cpu_stats = {}
+print("\nOPTIMIZED USING BASE DATASET")
+# p = psutil.Process(os.getpid())
+# cpu_stats = {}
 start_time = datetime.now()
 actions = optimized(max_cost=500, actions=base_action_list)
 end_time = datetime.now()
@@ -118,12 +113,9 @@ print(f"Liste des actions à acheter: {', '.join([action[0] for action in action
 print(f"Cout total : {cost}€")
 print(f"Benefice de : {gain}€")
 print(f"Temp de traitement: {(end_time - start_time).total_seconds()} secondes")
-print("=" * 25)
-
-#used with matplotlib
+print("=" * 25, end="\n\n")
 """
-print("\n")
-print(cpu_stats)
+#used with matplotlib
 lists = cpu_stats.items() # sorted by key, return a list of tuples
 x, y = zip(*lists) # unpack a list of pairs into two tuples
 
@@ -133,33 +125,39 @@ plt.ylabel("time in seconds")
 plt.xlabel("cpu time")
 plt.show()
 """
-
-"""
-print("\nOPTIMIZED WITH FILE DATASET 1")
+print("OPTIMIZED USING FILE SIENNA DATASET 1")
 start_time = datetime.now()
-dataset1_action = optimized(max_cost=500, actions=from_csv_to_list('data/dataset1_Python+P7.csv'))
+dataset1_action = optimized(
+    max_cost=500, actions=from_csv_to_list("data/dataset1_Python+P7.csv")
+)
 end_time = datetime.now()
 
 dataset1_cost = round(sum([action[1] for action in dataset1_action]), 2)
 dataset1_gain = round(sum([action[2] for action in dataset1_action]), 2)
 
 
-print(f"Liste des actions à acheter: {', '.join([data[0] for data in dataset1_action])}")
+print(
+    f"Liste des actions à acheter: {', '.join([data[0] for data in dataset1_action])}"
+)
 print(f"Cout total : {dataset1_cost}€")
 print(f"Benefice de : {dataset1_gain}€")
 print(f"Temp de traitement: {(end_time - start_time).total_seconds()} secondes")
-print("=" * 25)
+print("=" * 25, end="\n")
 
-print("\nOPTIMIZED WITH FILE DATASET 2")
+print("OPTIMIZED USING FILE SIENNA DATASET 2")
 start_time = datetime.now()
-dataset2_action = optimized(max_cost=500, actions=from_csv_to_list('data/dataset2_Python+P7.csv'))
+dataset2_action = optimized(
+    max_cost=500, actions=from_csv_to_list("data/dataset2_Python+P7.csv")
+)
 end_time = datetime.now()
 
 dataset2_cost = round(sum([action[1] for action in dataset2_action]), 2)
 dataset2_gain = round(sum([action[2] for action in dataset2_action]), 2)
 
-print(f"Liste des actions à acheter: {', '.join([action[0] for action in dataset2_action])}")
+print(
+    f"Liste des actions à acheter: {', '.join([action[0] for action in dataset2_action])}"
+)
 print(f"Cout total : {dataset2_cost}€")
 print(f"Benefice de : {dataset2_gain}€")
 print(f"Temp de traitement: {(end_time - start_time).total_seconds()} secondes")
-"""
+print("=" * 25, end="\n\n\n")
